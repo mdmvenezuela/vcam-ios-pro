@@ -22,7 +22,24 @@ jobs:
 
     - name: Install Theos
       run: |
-        bash -c "$(curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos)"
+        curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos -o /tmp/install-theos
+        # GitHub API access used by install-sdk can fail on hosted runners.
+        # Keep the official RootHide installer flow, but replace only its SDK-fetch
+        # command with the pinned direct release asset URL (no API request).
+        python3 - <<'PY'
+        from pathlib import Path
+        p = Path("/tmp/install-theos")
+        s = p.read_text()
+        old = "$THEOS/bin/install-sdk latest && $THEOS/bin/install-sdk latest-tv"
+        new = """mkdir -p "$THEOS/sdks"
+        curl -fL --retry 3 --retry-delay 2 https://github.com/theos/sdks/releases/download/master-146e41f/iPhoneOS16.5.sdk.tar.xz -o /tmp/iPhoneOS16.5.sdk.tar.xz
+        tar -xf /tmp/iPhoneOS16.5.sdk.tar.xz -C "$THEOS/sdks"
+        test -d "$THEOS/sdks/iPhoneOS16.5.sdk" """
+        if old not in s:
+            raise SystemExit("Could not locate SDK install command in RootHide installer")
+        p.write_text(s.replace(old, new))
+        PY
+        bash /tmp/install-theos
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
         echo "PATH=$HOME/theos/bin:$PATH" >> $GITHUB_ENV
       timeout-minutes: 10
