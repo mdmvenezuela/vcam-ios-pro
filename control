@@ -1,5 +1,5 @@
-Package: com.yourname.vcam
-Name: VCam
+Package: com.mdmvenezuela.vcam.baseline
+Name: VCam Original
 Version: 1.0.0
 Architecture: iphoneos-arm
 Description: 开源虚拟相机插件 - 替换摄像头输入为自定义视频
