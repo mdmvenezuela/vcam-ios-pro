@@ -42,7 +42,7 @@ jobs:
         bash /tmp/install-theos
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
         echo "PATH=$HOME/theos/bin:$PATH" >> $GITHUB_ENV
-      timeout-minutes: 10
+      timeout-minutes: 30
 
     - name: Install iOS SDK
       run: |
