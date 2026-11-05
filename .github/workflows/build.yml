@@ -22,8 +22,7 @@ jobs:
 
     - name: Install Theos
       run: |
-        export THEOS=~/theos
-        git clone --recursive https://github.com/theos/theos.git ~/theos
+        bash -c "$(curl -fsSL https://raw.githubusercontent.com/roothide/theos/master/bin/install-theos)"
         echo "THEOS=$HOME/theos" >> $GITHUB_ENV
         echo "PATH=$HOME/theos/bin:$PATH" >> $GITHUB_ENV
       timeout-minutes: 10
@@ -41,6 +40,7 @@ jobs:
       run: |
         export THEOS=$HOME/theos
         export PATH=$HOME/theos/bin:$PATH
+        export THEOS_PACKAGE_SCHEME=roothide
         make clean
         make package FINALPACKAGE=1 2>&1
         echo "Build complete. Packages:"
